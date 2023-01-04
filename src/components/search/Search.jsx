@@ -7,21 +7,22 @@ function Search({onSearchChange}) {
 
     const [search, setSearch] = useState(null)
 
-    const loadOptions = (inputValue) => {
-        return fetch(
-            `${GEO_API_URL}/cities?minPopulatiion=1000000&namePrefix=${inputValue}`, geoApiOptions)
-        .then(response => response.json())
-        .then(response => {
+    async function LoadOptions(inputValue) {
+        try {
+            const response = await fetch(
+                `${GEO_API_URL}/cities?minPopulatiion=500000&namePrefix=${inputValue}`, geoApiOptions)
+            const response_1 = await response.json()
             return {
-                options: response.data.map((city) => {
+                options: response_1.data.map((city) => {
                     return {
-                        value:`${city.latitude} ${city.longitude}`,
-                        label:`${city.name, city.countryCode}` ,
+                        value: `${city.latitude} ${city.longitude}`,
+                        label: `${city.name}, ${city.countryCode}`,
                     }
                 })
             }
-        })
-        .catch(err => console.error(err));
+        } catch (err) {
+            return console.error(err)
+        }
     } 
 
     const handleOnChange = (searchData) => {
@@ -36,7 +37,7 @@ function Search({onSearchChange}) {
     debounceTimeout={600}
     value={search}
     onChange={handleOnChange}
-    loadOptions={loadOptions} 
+    loadOptions={LoadOptions} 
     />
   )
 }
